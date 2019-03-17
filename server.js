@@ -156,15 +156,15 @@ router.route('/movies')
     })
     .put(authJwtController.isAuthenticated, function(req, res)
     {
-        if(!req.body || !req.body.findBy || !req.body.updateto)
+        if(!req.body || !req.body.findMovie || !req.body.updateMovieTo)
         {
             return res.status(403).json({success: false, message: "Error: please provide something that can be updated"})
         }
         else
         {
-            console.log("findby: " + JSON.stringify(req.body.findby));
-            console.log("updateto: " + JSON.stringify(req.body.updateto));
-            Movie.updateMovie(req.body.findby, req.body.updateto, function(err, doc)
+            console.log("FindMovie: " + JSON.stringify(req.body.findMovie));
+            console.log("UpdateMovieTo: " + JSON.stringify(req.body.updateMovieTo));
+            Movie.updateMany(req.body.findMovie, req.body.updateMovieTo, function(err, doc)
             {
                 console.log(JSON.stringify(doc));
                 if(err)
