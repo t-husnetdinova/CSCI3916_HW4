@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var authJwtController = require('./auth_jwt');
 var User = require('./Users');
+var Movie = require('./Movies');
 var jwt = require('jsonwebtoken');
 
 var app = express();
@@ -61,12 +62,12 @@ router.post('/signup', function(req, res) {
             if (err) {
                 // duplicate entry
                 if (err.code == 11000)
-                    return res.json({ success: false, message: 'A user with that username already exists. '});
+                    return res.json({ success: false, message: 'Error: a user with that username already exists. '});
                 else
                     return res.send(err);
             }
 
-            res.json({ success: true, message: 'User created!' });
+            res.json({ success: true, message: 'Success: new user created!' });
         });
     }
 });
@@ -87,13 +88,119 @@ router.post('/signin', function(req, res) {
                 res.json({success: true, token: 'JWT ' + token});
             }
             else {
-                res.status(401).send({success: false, message: 'Authentication failed.'});
+                res.status(401).send({success: false, message: 'Error: authentication failed.'});
             }
         });
 
 
     });
 });
+
+router.route('/movies')
+    .post(authJwtController.isAuthenticated, function(req, res)
+    {
+        if (!req.body.title || !req.body.year || !req.body.genre || !req.body.actor[0] || !req.body.actor[1]
+            || !req.body.actor[2])
+        {
+
+            res.json({success: false, message: "Error: make sure all fields correctly filled/formatted."});
+        }
+        else
+        {
+            var movie = new Movie();
+            movie.title = req.body.title;
+            movie.year = req.body.year;
+            movie.genre = req.body.genre;
+            movie.actor = req.body.actor;
+
+            movie.save(function (err)
+            {
+                if (err)
+                {
+                    if (err.code === 11000)
+                    {
+                        return res.json({success: false, message: "Error: a movie with that title already exists."});
+                    }
+                    else
+                    {
+                        return res.send(err);
+                    }
+                }
+                res.status(200).send({success: true, message: "Success: new movie added!"});
+            });
+        }
+    })
+
+    .get(authJwtController.isAuthenticated, function(req, res)
+    {
+        if(!req.body)
+        {
+            return res.status(403).json({success: false, message: "Error: an empty query has been provided."})
+        }
+        else
+        {
+            Movie.find(req.body).select("title year genre actor").exec(function (err, movie)
+            {
+                    if (err) res.send(err);
+
+                    if(movie && movie.length > 0)
+                    {
+                        return res.status(200).json({success: true, message: "Success: movie found!", movie: movie});
+                    }
+                    else
+                    {
+                        return res.status(404).json({success: false, message: "Error: movie not found."})
+                    }
+            })
+        }
+    })
+    .put(authJwtController.isAuthenticated, function(req, res)
+    {
+        if(!req.body || !req.body.findBy || !req.body.updateto)
+        {
+            return res.status(403).json({success: false, message: "Error: please provide something that can be updated"})
+        }
+        else
+        {
+            console.log("findby: " + JSON.stringify(req.body.findby));
+            console.log("updateto: " + JSON.stringify(req.body.updateto));
+            Movie.updateMovie(req.body.findby, req.body.updateto, function(err, doc)
+            {
+                console.log(JSON.stringify(doc));
+                if(err)
+                {
+                    return res.status(403).json({success: false, message: "Error: cannot update movie."});
+                }
+                else if(doc.n === 0)
+                {
+                    return res.status(403).json({success: false, message: "Error: could not find movie to update."});
+                }
+                else
+                {
+                    return res.status(200).json({success: true, message: "Success: movie has been updated!"})
+                }
+            })
+        }
+    })
+    .delete(authJwtController.isAuthenticated, function(req, res)
+    {
+
+    })
+    .all(function (req, res)
+    {
+        console.log(req.body);
+        res = res.status(403);
+        res.send("HTTP method not supported: only GET, POST, PUT, and DELETE requests are supported");
+    })
+;
+
+router.route('/')
+    .all(function(req, res)
+    {
+        console.log(req.body);
+        res = res.status(403);
+        res.send("ROOT FAIL! Invalid path/directory!");
+    });
 
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
