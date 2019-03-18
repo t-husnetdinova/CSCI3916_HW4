@@ -7,6 +7,12 @@ mongoose.Promise = global.Promise;
 mongoose.connect(process.env.DB, { useNewUrlParser: true } );
 mongoose.set('useCreateIndex', true);
 
+function validateMovieGenre(genre)
+{
+    return genre === "Action:" || genre === "Adventure" || genre === "Comedy" || genre === "Drama" || genre === "Fantasy" ||
+        genre === "Horror" || genre === "Mystery" || genre === "Thriller" || genre === "Western";
+}
+
 // user schema
 var MovieSchema = new Schema({
     title: { type: String, required: true, index: { unique: true }},

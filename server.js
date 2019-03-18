@@ -135,7 +135,7 @@ router.route('/movies')
     {
         if(!req.body)
         {
-            return res.status(403).json({success: false, message: "Error: an empty query has been provided."})
+            return res.status(403).json({success: false, message: "Error: an empty query has been provided."});
         }
         else
         {
@@ -149,7 +149,7 @@ router.route('/movies')
                     }
                     else
                     {
-                        return res.status(404).json({success: false, message: "Error: movie not found."})
+                        return res.status(404).json({success: false, message: "Error: movie not found."});
                     }
             })
         }
@@ -158,7 +158,7 @@ router.route('/movies')
     {
         if(!req.body || !req.body.findMovie || !req.body.updateMovieTo)
         {
-            return res.status(403).json({success: false, message: "Error: please provide something that can be updated"})
+            return res.status(403).json({success: false, message: "Error: please provide something that can be updated"});
         }
         else
         {
@@ -177,14 +177,36 @@ router.route('/movies')
                 }
                 else
                 {
-                    return res.status(200).json({success: true, message: "Success: movie has been updated!"})
+                    return res.status(200).json({success: true, message: "Success: movie has been updated!"});
                 }
             })
         }
     })
     .delete(authJwtController.isAuthenticated, function(req, res)
     {
-
+        if(!req.body)
+        {
+            return res.status(403).json({success: false, message: "Error: an empty query has been provided."});
+        }
+        else
+        {
+            Movie.deleteOne(req.body, function(err, doc)
+            {
+                console.log(JSON.stringify(doc));
+                if(err)
+                {
+                    return res.status(403).json({success: false, message: "Error: unable to delete movie."});
+                }
+                else if(doc.n === 0)
+                {
+                    return res.status(403).json({success: false, message: "Error: unable to delete movie because it wasn't found."});
+                }
+                else
+                {
+                    return res.status(200).json({success: true, message: "Success: movie has been deleted!"});
+                }
+            })
+        }
     })
     .all(function (req, res)
     {
