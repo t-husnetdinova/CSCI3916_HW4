@@ -13,7 +13,7 @@ function validateMovieGenre(genre)
         genre === "Horror" || genre === "Mystery" || genre === "Thriller" || genre === "Western";
 }
 
-// user schema
+//movie schema
 var MovieSchema = new Schema({
     title: { type: String, required: true, index: { unique: true }},
     year: { type: String, required: true},
