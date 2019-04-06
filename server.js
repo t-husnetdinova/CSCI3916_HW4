@@ -234,7 +234,7 @@ router.route('/reviews')
     {
         console.log(req.body);
         res = res.status(403);
-        res.send("HTTP method not supported: only GET, POST, PUT, and DELETE requests are supported");
+        res.send("HTTP method not supported: only GET and POST requests are supported");
     });
 
 router.route('/')
