@@ -4,6 +4,7 @@ var passport = require('passport');
 var authJwtController = require('./auth_jwt');
 var User = require('./Users');
 var Movie = require('./Movies');
+var Review = require('./Reviews');
 var jwt = require('jsonwebtoken');
 
 var app = express();
@@ -216,8 +217,25 @@ router.route('/movies')
         console.log(req.body);
         res = res.status(403);
         res.send("HTTP method not supported: only GET, POST, PUT, and DELETE requests are supported");
+    });
+
+router.route('/reviews')
+    .post(authJwtController.isAuthenticated, function(req, res)
+    {
+
     })
-;
+
+    .get(authJwtController.isAuthenticated, function(req, res)
+    {
+
+    })
+
+    .all(function (req, res)
+    {
+        console.log(req.body);
+        res = res.status(403);
+        res.send("HTTP method not supported: only GET, POST, PUT, and DELETE requests are supported");
+    });
 
 router.route('/')
     .all(function(req, res)
