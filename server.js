@@ -222,7 +222,7 @@ router.route('/movies')
 router.route('/reviews')
     .post(authJwtController.isAuthenticated, function(req, res)
     {
-        if(!req.body.movie || !req.body.quote || !req.body.rating)
+        if(!req.body.quote || !req.body.rating)
         {
             return res.json({success: false, message: "Error: make sure all fields correctly filled/formatted."});
         }
