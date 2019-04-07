@@ -244,7 +244,7 @@ router.route('/reviews')
                         {
                             return res.status(403).json({success: false, message: "Error: unable to post review."});
                         }
-                        else if(review.movie != movie._id)
+                        else if(!movie)
                         {
                             return res.status(403).json({success: false, message: "Error: unable to post review, movie does not exist."});
                         }
