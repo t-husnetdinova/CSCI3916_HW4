@@ -242,6 +242,10 @@ router.route('/reviews')
                     Movie.findOne({title: req.body.movie_title}, function(err, movie) {
                         if(err)
                         {
+                            return res.status(403).json({success: false, message: "Error: unable to post review."});
+                        }
+                        else if(review.movie != movie._id)
+                        {
                             return res.status(403).json({success: false, message: "Error: unable to post review, movie does not exist."});
                         }
                         else
