@@ -222,19 +222,47 @@ router.route('/movies')
 router.route('/reviews')
     .post(authJwtController.isAuthenticated, function(req, res)
     {
+        if(!req.body.movie || !req.body.quote || !req.body.rating)
+        {
+            return res.json({success: false, message: "Error: make sure all fields correctly filled/formatted."});
+        }
+        else
+        {
+            var review = new Review();
+            //gets authorization from headers and removes first 4 characters (JWT ) so you just have the token
+            jwt.verify(req.headers.authorization.substring(4), process.env.SECRET_KEY, function(err, decoded) {
+                if(err)
+                {
+                    return res.status(403).json({success: false, message: "Error: unable to post review."});
+                }
+                else {
+                    review.reviewer_id = JSON.parse(decoded).id;
+                }
+            });
+            Movie.findOne({title: req.body.movie_title}, function(err, movie) {
+                if(err)
+                {
+                    return res.status(403).json({success: false, message: "Error: unable to post review."});
+                }
+                else {
+                    review.movie = movie._id;
+                }
 
+            });
+            review.quote = req.body.quote;
+            review.rating = req.body.rating;
+
+            review.save(function (err)
+            {
+                res.status(200).send({success: true, message: "Success: new review added!"});
+            });
+        }
     })
-
-    .get(authJwtController.isAuthenticated, function(req, res)
-    {
-
-    })
-
     .all(function (req, res)
     {
         console.log(req.body);
         res = res.status(403);
-        res.send("HTTP method not supported: only GET and POST requests are supported");
+        res.send("HTTP method not supported: only POST requests are supported");
     });
 
 router.route('/')
