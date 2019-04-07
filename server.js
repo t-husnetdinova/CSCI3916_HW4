@@ -156,7 +156,7 @@ router.route('/movies')
                         }
                         else
                         {
-                            return res.status(200).json({success: true, message: "Success: movie found! (with review parameter)"})
+                            return res.status(200).json({success: true, message: "Success: movie found! (with review parameter)", movie: movie})
                         }
                 })
             }
