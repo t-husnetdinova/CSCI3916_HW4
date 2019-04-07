@@ -143,7 +143,7 @@ router.route('/movies')
         }
         else
         {
-            if(req.query && req.query.reviews && req.query.reviews === true)
+            if(req.query && req.query.reviews && req.query.reviews === "true")
             {
                 Movie.aggregate()
                     .match(req.body)
@@ -152,11 +152,11 @@ router.route('/movies')
                     {
                         if(err)
                         {
-                            return res.status(403).json({success: false, message: "Error: movie not found."});
+                            return res.status(403).json({success: false, message: "Error: movie not found. (with review parameter)"});
                         }
                         else
                         {
-                            return res.status(200).json({success: true, message: "Success: movie found!"})
+                            return res.status(200).json({success: true, message: "Success: movie found! (with review parameter)"})
                         }
                 })
             }
@@ -167,11 +167,11 @@ router.route('/movies')
 
                     if(movie && movie.length > 0)
                     {
-                        return res.status(200).json({success: true, message: "Success: movie found!", movie: movie});
+                        return res.status(200).json({success: true, message: "Success: movie found! (no review parameter)", movie: movie});
                     }
                     else
                     {
-                        return res.status(404).json({success: false, message: "Error: movie not found."});
+                        return res.status(404).json({success: false, message: "Error: movie not found. (no review parameter)"});
                     }
                 })
             }
