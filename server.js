@@ -143,8 +143,26 @@ router.route('/movies')
         }
         else
         {
-            Movie.find(req.body).select("title year genre actor").exec(function (err, movie)
+            if(req.query && req.query.reviews && req.query.reviews === true)
             {
+                Movie.aggregate()
+                    .match(req.body)
+                    .lookup({from: 'reviews', localField: '_id', foreignField: 'movie', as: 'reviews'})
+                    .exec(function(err, movie)
+                    {
+                        if(err)
+                        {
+                            return res.status(403).json({success: false, message: "Error: movie not found."});
+                        }
+                        else
+                        {
+                            return res.status(200).json({success: true, message: "Success: movie found!"})
+                        }
+                })
+            }
+            else{
+                Movie.find(req.body).select("title year genre actor").exec(function (err, movie)
+                {
                     if (err) res.send(err);
 
                     if(movie && movie.length > 0)
@@ -155,7 +173,8 @@ router.route('/movies')
                     {
                         return res.status(404).json({success: false, message: "Error: movie not found."});
                     }
-            })
+                })
+            }
         }
     })
     .put(authJwtController.isAuthenticated, function(req, res)
@@ -263,15 +282,11 @@ router.route('/reviews')
                                 else {
                                     return res.status(200).send({success: true, message: "Success: new review added!"});
                                 }
-
                             })
-
                         }
-
                     })
                 }
             })
-
         }
     })
     .all(function (req, res)
