@@ -235,27 +235,39 @@ router.route('/reviews')
                 {
                     return res.status(403).json({success: false, message: "Error: unable to post review."});
                 }
-                else {
-                    review.reviewer_id = JSON.parse(decoded).id;
-                }
-            });
-            Movie.findOne({title: req.body.movie_title}, function(err, movie) {
-                if(err)
+                else
                 {
-                    return res.status(403).json({success: false, message: "Error: unable to post review."});
-                }
-                else {
-                    review.movie = movie._id;
-                }
+                    review.reviewer_id = decoded.id;
 
-            });
-            review.quote = req.body.quote;
-            review.rating = req.body.rating;
+                    Movie.findOne({title: req.body.movie_title}, function(err, movie) {
+                        if(err)
+                        {
+                            return res.status(403).json({success: false, message: "Error: unable to post review, movie does not exist."});
+                        }
+                        else
+                        {
+                            review.movie = movie._id;
+                            review.quote = req.body.quote;
+                            review.rating = req.body.rating;
 
-            review.save(function (err)
-            {
-                res.status(200).send({success: true, message: "Success: new review added!"});
-            });
+                            review.save(function (err)
+                            {
+                                if(err)
+                                {
+                                    return res.status(403).json({success: false, message: "Error: unable to post review."});
+                                }
+                                else {
+                                    return res.status(200).send({success: true, message: "Success: new review added!"});
+                                }
+
+                            })
+
+                        }
+
+                    })
+                }
+            })
+
         }
     })
     .all(function (req, res)
