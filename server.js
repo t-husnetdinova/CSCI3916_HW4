@@ -106,7 +106,7 @@ router.route('/movies/:movieid')
         if(req.query && req.query.reviews && req.query.reviews === "true")
         {
             Movie.aggregate()
-                .match(req.params.movieId)
+                .match({_id: req.params.movieId})
                 .lookup({from: 'reviews', localField: '_id', foreignField: 'movie', as: 'reviews'})
                 .exec(function(err, movie)
                 {
@@ -121,7 +121,7 @@ router.route('/movies/:movieid')
                 })
         }
         else{
-            Movie.find(req.params.movieid).select("title year genre actor").exec(function (err, movie)
+            Movie.find({_id: req.params.movieid}).select("title year genre actor").exec(function (err, movie)
             {
                 if (err) res.send(err);
 
