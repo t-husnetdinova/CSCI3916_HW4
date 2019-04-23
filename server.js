@@ -281,7 +281,7 @@ router.route('/reviews')
     {
         if(!req.body.quote || !req.body.rating)
         {
-            return res.json({success: false, message: "Error: make sure all fields correctly filled/formatted." + req.body});
+            return res.json({success: false, message: "Error: make sure all fields correctly filled/formatted." + JSON.stringify(req.body)});
         }
         else
         {
