@@ -310,6 +310,7 @@ router.route('/reviews')
                             review.movie = movie._id;
                             review.quote = req.body.quote;
                             review.rating = req.body.rating;
+                            review.username = decoded.username;
 
                             review.save(function (err)
                             {
