@@ -101,12 +101,12 @@ router.post('/signin', function(req, res) {
     });
 });
 
-router.route('/movies/:movieid')
+router.route('/movies/:movieId')
     .get(authJwtController.isAuthenticated, function (req, res) {
         if(req.query && req.query.reviews && req.query.reviews === "true")
         {
             Movie.aggregate()
-                .match({_id: req.params.movieId})
+                .match({_id: mongoose.Types.ObjectId(req.params.movieId)})
                 .lookup({from: 'reviews', localField: '_id', foreignField: 'movie', as: 'reviews'})
                 .exec(function(err, movie)
                 {
@@ -121,7 +121,7 @@ router.route('/movies/:movieid')
                 })
         }
         else{
-            Movie.find({_id: req.params.movieid}).select("title year genre actor").exec(function (err, movie)
+            Movie.find({_id: mongoose.Types.ObjectId(req.params.movieId)}).select("title year genre actor").exec(function (err, movie)
             {
                 if (err) res.send(err);
 
