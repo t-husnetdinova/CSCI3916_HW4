@@ -103,6 +103,7 @@ router.post('/signin', function(req, res) {
 
 router.route('/movies/:movieId')
     .get(authJwtController.isAuthenticated, function (req, res) {
+        console.log("movieId: "+req.params.movieId);
         if(req.query && req.query.reviews && req.query.reviews === "true")
         {
             Movie.aggregate()
