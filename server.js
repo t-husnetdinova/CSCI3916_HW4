@@ -297,6 +297,42 @@ router.route('/reviews')
         res.send("HTTP method not supported: only POST requests are supported");
     });
 
+router.route('/movie/:movieId')
+    .get(authJwtController.isAuthenticated, function (req, res) {
+            if(req.query && req.query.reviews && req.query.reviews === "true")
+            {
+                Movie.aggregate()
+                    .match(req.params.movieId)
+                    .lookup({from: 'reviews', localField: '_id', foreignField: 'movie', as: 'reviews'})
+                    .exec(function(err, movie)
+                    {
+                        if(err)
+                        {
+                            return res.status(403).json({success: false, message: "Error: movie not found. (with review parameter)"});
+                        }
+                        else
+                        {
+                            return res.status(200).json({success: true, message: "Success: movie found! (with review parameter)", movie: movie})
+                        }
+                    })
+            }
+            else{
+                Movie.find(req.params.movieId).select("title year genre actor").exec(function (err, movie)
+                {
+                    if (err) res.send(err);
+
+                    if(movie && movie.length > 0)
+                    {
+                        return res.status(200).json({success: true, message: "Success: movie found! (no review parameter)", movie: movie});
+                    }
+                    else
+                    {
+                        return res.status(404).json({success: false, message: "Error: movie not found. (no review parameter)"});
+                    }
+                })
+            }
+    });
+
 router.route('/')
     .all(function(req, res)
     {
