@@ -133,7 +133,7 @@ router.route('/movies/:movieId')
                                 reviewSum = reviewSum + reviews.rating;
                             });
 
-                            movie = Object.assign({}, movie, {avgRating: reviewSum/(reviews.rating.length())});
+                            Object.assign(movie, {avgRating: reviewSum/(reviews.rating.length())});
                         });
 
                         //sort in descending order
