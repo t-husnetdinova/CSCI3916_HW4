@@ -117,6 +117,31 @@ router.route('/movies/:movieId')
                     }
                     else
                     {
+                        //for every movie, calculate average
+                        movie.forEach(movie =>
+                        {
+                            //total reviews
+                            let reviewSum = 0;
+
+                            //calculate average
+                            //append average to movie
+
+                            //for every review, add rating
+                            movie.reviews.forEach(reviews =>
+                            {
+                                //add rating
+                                reviewSum = reviewSum + reviews.rating;
+                            });
+
+                            movie = Object.assign({}, movie, {avgRating: reviewSum/(reviews.rating.length())});
+                        });
+
+                        //sort in descending order
+                        movie.sort(function(a, b)
+                        {
+                            return b.avgRating - a.avgRating;
+                        });
+
                         return res.status(200).json({success: true, message: "Success: movie found! (with review parameter)", movie: movie})
                     }
                 })
