@@ -134,13 +134,7 @@ router.route('/movies/:movieId')
                             });
 
                             if(movieParam.reviews.length > 0)
-                                Object.assign(movieParam, {avgRating: reviewSum/(movieParam.reviews.length)});
-                        });
-
-                        //sort in descending order
-                        movie.sort(function(a, b)
-                        {
-                            return b.avgRating - a.avgRating;
+                                Object.assign(movieParam, {avgRating: (reviewSum/movieParam.reviews.length).toFixed(2)});
                         });
 
                         return res.status(200).json({success: true, message: "Success: movie found! (with review parameter)", movie: movie})
@@ -220,6 +214,32 @@ router.route('/movies')
                         }
                         else
                         {
+                            //for every movie, calculate average
+                            movie.forEach(function(movieParam)
+                            {
+                                //total reviews
+                                let reviewSum = 0;
+
+                                //calculate average
+                                //append average to movie
+
+                                //for every review, add rating
+                                movieParam.reviews.forEach(function(reviewsParam)
+                                {
+                                    //add rating
+                                    reviewSum = reviewSum + reviewsParam.rating;
+                                });
+
+                                if(movieParam.reviews.length > 0)
+                                    Object.assign(movieParam, {avgRating: (reviewSum/movieParam.reviews.length).toFixed(2)});
+                            });
+
+                            //sort in descending order
+                            movie.sort(function(a, b)
+                            {
+                                return b.avgRating - a.avgRating;
+                            });
+
                             return res.status(200).json({success: true, message: "Success: movie found! (with review parameter)", movie: movie})
                         }
                 })
