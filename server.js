@@ -118,7 +118,7 @@ router.route('/movies/:movieId')
                     else
                     {
                         //for every movie, calculate average
-                        movie.forEach(function(movie)
+                        movie.forEach(function(movieParam)
                         {
                             //total reviews
                             let reviewSum = 0;
@@ -127,14 +127,14 @@ router.route('/movies/:movieId')
                             //append average to movie
 
                             //for every review, add rating
-                            movie.reviews.forEach(function(reviews)
+                            movieParam.reviews.forEach(function(reviewsParam)
                             {
                                 //add rating
-                                reviewSum = reviewSum + reviews.rating;
+                                reviewSum = reviewSum + reviewsParam.rating;
                             });
 
-                            if(reviews.length > 0)
-                                Object.assign(movie, {avgRating: reviewSum/(reviews.length)});
+                            if(movieParam.reviews.length > 0)
+                                Object.assign(movieParam, {avgRating: reviewSum/(movieParam.reviews.length)});
                         });
 
                         //sort in descending order
